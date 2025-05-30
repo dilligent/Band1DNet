@@ -152,6 +152,7 @@ class AtomicChainDataset(Dataset):
     def __getitem__(self, idx):
         return self.data[idx]
 
+
 class EarlyStopping:
     """Early stopping to prevent overfitting
     
@@ -358,7 +359,7 @@ def prepare_synthetic_data(n_total=201, n_val=41):
             atom_type = 0 if 'Si' in content[28 + j] else 1
             position = float(content[28 + j].split()[1])
             atoms.append([atom_type, position])
-        target = np.load(f'./structures/{i+1}/band_data.npz')['energies']
+        target = np.load(f'./structures/{i+1}/band_data.npz')['energies'][:, :26]
         data.append((unit_cell_length, atoms, target))
 
     train_data = data[:-n_val]
