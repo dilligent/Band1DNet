@@ -8,18 +8,30 @@ def extract_band_data(filename):
         filename: 包含能带数据的文本文件名
         
     返回:
-        energies: 形状为(50, 26)的numpy数组, 包含所有点的能量值
-        occupations: 形状为(50, 26)的numpy数组, 包含所有点的占据值
+        energies: 形状为(50, n)的numpy数组, 包含所有点的能量值
+        occupations: 形状为(50, n)的numpy数组, 包含所有点的占据值
     """
+   
+    index = []
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+        for i in range(len(lines)):
+            line = lines[i].strip()
+            if line.startswith('#  Point'):
+                index.append(i)
+            if len(index) == 2:
+                break
+
+    num_bands = index[1] - index[0] - 2  # 能带数目为两点之间的行数减去表头行
     # 初始化存储数据的数组
     num_points = 50
-    num_bands = 26
+
     energies = np.zeros((num_points, num_bands))
     occupations = np.zeros((num_points, num_bands))
     
     current_point = -1  # 当前处理的点索引
     reading_bands = False  # 是否正在读取能带数据
-    
+
     with open(filename, 'r') as f:
         for line in f:
             line = line.strip()
@@ -75,9 +87,9 @@ def main():
     
     # 保存数据到NPZ文件
     np.savez(output_file, energies=energies, occupations=occupations)
-    # print(f"数据已成功保存到 {output_file}")
-    # print(f"能量数据形状: {energies.shape}")
-    # print(f"占据数据形状: {occupations.shape}")
+    print(f"数据已成功保存到 {output_file}")
+    print(f"能量数据形状: {energies.shape}")
+    print(f"占据数据形状: {occupations.shape}")
 
 if __name__ == "__main__":
     main()
